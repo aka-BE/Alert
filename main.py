@@ -14,7 +14,7 @@ ALERT_SECRET = os.getenv("ALERT_SECRET")  # optional, see below
 
 BASE_URL = "https://alert-production-f2becb6a.up.railway.app"
 
-COOLDOWN = 300  # 5 minutes
+COOLDOWN = 60  # 60 seconds
 COOLDOWN_FILE = Path("last_call.txt")
 
 client = Client(ACCOUNT_SID, AUTH_TOKEN)
