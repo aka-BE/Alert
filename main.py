@@ -19,21 +19,20 @@ SYMBOL = "BTCUSDT"
 POLL = float(os.getenv("POLL_SECONDS", "2"))
 PRICE_URL = "https://fapi.binance.com/fapi/v1/ticker/price"
 
-# name -> (environment variable, direction)
+# name -> (level from Railway variable, direction)
 ALERT_DEFS = {
-    "TOP-1": ("TOP_1", "above"),
-    "TOP-2": ("TOP_2", "above"),
-    "BTT-1": ("BTT_1", "below"),
-    "BTT-2": ("BTT_2", "below"),
+    "A1": (os.getenv("A1"), "above"),
+    "A2": (os.getenv("A2"), "above"),
+    "B1": (os.getenv("B1"), "below"),
+    "B2": (os.getenv("B2"), "below"),
 }
 
-# Only alerts with a level set in Railway Variables are active
+# Only alerts with a level set are active
 alerts = {}
-for name, (env, direction) in ALERT_DEFS.items():
-    val = os.getenv(env)
-    if val:
+for name, (level, direction) in ALERT_DEFS.items():
+    if level:
         alerts[name] = {
-            "level": float(val),
+            "level": float(level),
             "direction": direction,
             "armed": True,
             "fired_at": None,
@@ -119,7 +118,7 @@ async def health():
 
 @app.api_route("/twiml", methods=["GET", "POST"])
 async def twiml(request: Request):
-    name = request.query_params.get("name", "alert").replace("-", " ")
+    name = request.query_params.get("name", "alert")
     xml = (
         f'<Response><Say>Alert {name} triggered.</Say>'
         f'<Pause length="5"/></Response>'
@@ -137,7 +136,7 @@ async def test(request: Request):
 
 @app.get("/rearm")
 async def rearm(request: Request):
-    # /rearm re-arms all alerts, /rearm?name=TOP-1 re-arms just one
+    # /rearm re-arms all alerts, /rearm?name=A1 re-arms just one
     if not authorized(request):
         return Response("Forbidden", status_code=403)
     name = request.query_params.get("name")
