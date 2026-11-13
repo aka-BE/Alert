@@ -11,7 +11,7 @@ ACCOUNT_SID = os.getenv("TWILIO_ACCOUNT_SID")
 AUTH_TOKEN = os.getenv("TWILIO_AUTH_TOKEN")
 FROM_NUMBER = os.getenv("TWILIO_FROM_NUMBER")
 TO_NUMBER = os.getenv("MY_PHONE_NUMBER")
-ALERT_SECRET = os.getenv("ALERT_SECRET")  # optional, protects /test and /rearm
+SECRET = os.getenv("SECRET")  # optional, protects /test and /rearm
 
 BASE_URL = "https://alert-production-f2becb6a.up.railway.app"
 
@@ -45,7 +45,7 @@ status = {"last_price": None, "last_error": None, "last_call_error": None}
 
 
 def authorized(request: Request) -> bool:
-    return not ALERT_SECRET or request.query_params.get("key") == ALERT_SECRET
+    return not SECRET or request.query_params.get("key") == SECRET
 
 
 async def place_call(name: str):
